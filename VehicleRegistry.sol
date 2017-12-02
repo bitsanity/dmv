@@ -21,23 +21,27 @@ contract VehicleRegistry {
 
   function VehicleRegistry() {
     agency = msg.sender;
-    fee = 4 finney; // about $1
+    fee = 4 finney;
   }
 
   function() payable { revert(); }
 
-  function register( string vin ) feeCheck payable {
+  // manufacturer/importer works with agency to do first registration
+  function register( string vin ) onlyAgency {
     Transfer( agency, msg.sender, vin );
   }
 
+  // anyone can transfer ownership to anyone
   function transfer( address to, string vin ) feeCheck payable {
     Transfer( msg.sender, to, vin );
   }
 
+  // anyone can return ownership to the agency, aka writeoff
   function dispose( string vin ) feeCheck payable {
     Transfer( msg.sender, agency, vin );
   }
 
+  // mechanism to handle out-of-band occurrences
   function assign( address to, string vin ) onlyAgency {
     Transfer( agency, to, vin );
   }
